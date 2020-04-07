@@ -20,12 +20,15 @@ def get_feed(url):
     return items
 
 
-def download_file(url, filename=False):
+def download_file(url, destination, filename=False):
     # Destination
     destination_file = filename if filename else url.split('/')[-1]
+    destination_path = os.path.join(destination, destination_file)
 
-    if os.path.exists(destination_file):
-        logger.warning('> Skipped: Destination file "%s" already exists' % (destination_file))
+    if os.path.exists(destination_path):
+        logger.warning('> Skipped: Destination file "%s" already exists' % (
+            destination_path
+        ))
         return
 
     logger.debug('> Downloading %s >>> "%s"' % (url, destination_file))
@@ -37,7 +40,7 @@ def download_file(url, filename=False):
     chunk_size=1024
     num_bars = int(file_size / chunk_size)
 
-    with open(destination_file, 'wb') as fp:
+    with open(destination_path, 'wb') as fp:
         for chunk in tqdm(r.iter_content(chunk_size=chunk_size), **{
                 'total': num_bars,
                 'unit': 'KB',
@@ -45,7 +48,7 @@ def download_file(url, filename=False):
                 'leave': False}):
             fp.write(chunk)
 
-    logger.success('> File saved to %s (%d)' % (destination_file, file_size))
+    logger.success('> File saved to %s (%d)' % (destination_path, file_size))
 
 
     

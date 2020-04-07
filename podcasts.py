@@ -18,12 +18,19 @@ def fj_formatter(item):
 
 
 PODCAST_FEEDS = [
-    ('http://feeds.feedburner.com/filmjunk?format=xml', fj_formatter)
+    ('http://feeds.feedburner.com/filmjunk?format=xml',     # Feed
+     '/volume1/media/podcasts/Film Junk Podcast',           # Destionation
+     fj_formatter),                                         # Filename formatter
 ]
 
 
-for feed in PODCAST_FEEDS:
-    for item in get_feed(feed[0])[:7]:
-        logger.info('> %s - %s - %s' % (item['pubDate'], item['title'], item['link']))
-        # print(feed[1](item))
-        download_file(item['link'], filename=feed[1](item) if feed[1] else None)
+if __name__ == '__main__':
+
+
+    for feed in PODCAST_FEEDS:
+        for item in get_feed(feed[0]):
+            logger.info('> %s - %s - %s' % (item['pubDate'], item['title'], item['link']))
+
+            formatter = feed[2](item) if feed[1] else None
+
+            download_file(item['link'], destination=feed[1], filename=formatter)
